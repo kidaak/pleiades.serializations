@@ -2,27 +2,19 @@
 # -*- coding: utf-8 -*-
 
 """
-test_csv2json
+test_pjson
 ----------------------------------
 
-Tests for `csv2json` module of the pleiades.serializations project.
+Tests for `pjson` module of the pleiades.serializations project.
 """
 
-import unittest
+from nose.tools import *
 
-from pleiades.serializations import csv2json
+from pleiades.serializations import pcsv, pjson
 
 
-class TestPleiades.serializations(unittest.TestCase):
-
-    def setUp(self):
-        pass
-
-    def test_something(self):
-        pass
-
-    def tearDown(self):
-        pass
-
-if __name__ == '__main__':
-    unittest.main()
+def test_placejson():
+    pd = pcsv.PleiadesDump('tests/data/pleiades-places-latest.csv')
+    p = pjson.PLACEJSON(pd.data[0])
+    print p.json
+    assert_equal(p.json, '{"description": "An ancient place, cited: BAtlas 27 B2 Consabura/Consabrum", "documenturi": "http://pleiades.stoa.org/places/265876", "id": "265876", "placeuri": "http://pleiades.stoa.org/places/265876#this", "title": "Consabura/Consabrum"}')
