@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import json
+from os import makedirs
+
+DEFAULT_PATH_ROOT = "/var/www/pleiades.stoa.org/json/"
 
 class PJSON():
     """
@@ -25,21 +28,24 @@ class PLACEJSON(PJSON):
         create json from placedata object and optional name and location data objects
         """
 
+        self.id = placedata['id']
+
         # construct a dictionary from which to serialize the JSON
         d = {}
 
         # legacy Pleiades JSON fields: don't change these becaue third parties expect them just so
         orig = [
-            'connectsWith',
             'description',
             'id',
             'title'
         ]
         for o in orig:
-            d[o] = placedata[o]
+            if placedata[o].strip() != "":
+                d[o] = placedata[o].strip()
         d['type'] = 'FeatureCollection'
         d['reprPoint'] = [float(placedata['reprLong']),float(placedata['reprLat'])]
-        d['connectsWith'] = placedata['hasConnectionsWith']
+        if len(placedata['hasConnectionsWith']) > 0:
+            d['connectsWith'] = placedata['hasConnectionsWith']
         d['bbox'] = [float(v.strip()) for v in placedata['bbox'].split(',')]
         pid = placedata['id']
         if namedata:
@@ -60,10 +66,9 @@ class PLACEJSON(PJSON):
                     names.extend([n.strip() for n in t.split(',') if n.strip() != ""])
                     if t.strip() != "":
                         topod['nameTransliterated'] = t.strip()
-                    try:
-                        topod['nameLanguage'] = namedata.data[i]['nameLanguage'] 
-                    except KeyError:
-                        pass
+                    lang = namedata.data[i]['nameLanguage'].strip()
+                    if lang != "":
+                        topod['nameLanguage'] = lang
                     minDate = int(float(namedata.data[i]['minDate']))
                     maxDate = int(float(namedata.data[i]['maxDate']))
                     topod['minDate'] = "%s" % minDate
@@ -133,5 +138,20 @@ class PLACEJSON(PJSON):
         PJSON.__init__(self, d)
 
 
+    def write(self, pathroot=DEFAULT_PATH_ROOT, split_levels=3):
+        """
+        write json to disk
+        """
+        pid = self.id
+        pidbits = list(pid)
+        pidpath = pathroot + '/' + '/'.join(pidbits[:split_levels]) 
+        try:
+            makedirs(pidpath)
+        except OSError:
+            pass
+        fn = "%s/%s.json" % (pidpath, pid)
+        f = open(fn, 'w')
+        f.write(self.json)
+        f.close()
 
 
