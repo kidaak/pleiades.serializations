@@ -10,7 +10,7 @@ import sys
 import traceback
 import logging as l
 
-from pleiades.serialization import pcsv, pjson
+from pleiades.serializations import pcsv, pjson
 
 SCRIPT_DESC = 'Generates new-fangled Pleiades JSON from Pleiades CSV dumps'
 
