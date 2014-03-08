@@ -5,6 +5,7 @@ import codecs
 import cStringIO
 import csv
 import json
+import logging
 import re
 
 
@@ -52,10 +53,13 @@ class PleiadesDump():
         with open(fn, 'rb') as csvfile:
             reader = UnicodeReader(csvfile, encoding='utf-8')
             # store raw rows
+            logging.debug('storing raw rows')
             self.rows = [row for row in reader]
             # make easy access to keys
+            logging.debug('grabbing data keys')
             self.keys = sorted(self.rows[0])
             # parse data out of rows and into a list of dictionaries
+            logging.debug('parsing data rows into list of dicts')
             self.data = []
             for row in self.rows[1:]:
                 d = dict(zip(self.keys, row))
@@ -80,6 +84,7 @@ class PleiadesDump():
             except KeyError:
                 pass
             else:
+                logging.debug('creating pid index')
                 self.pidx = {}
                 for i,d in enumerate(self.data):
                     pid = d['pid']

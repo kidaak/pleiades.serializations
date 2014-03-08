@@ -48,7 +48,10 @@ class PLACEJSON(PJSON):
         d['reprPoint'] = [float(placedata['reprLong']),float(placedata['reprLat'])]
         if len(placedata['hasConnectionsWith']) > 0:
             d['connectsWith'] = placedata['hasConnectionsWith']
-        d['bbox'] = [float(v.strip()) for v in placedata['bbox'].split(',')]
+        try:
+            d['bbox'] = [float(v.strip()) for v in placedata['bbox'].split(',')]
+        except ValueError:
+            pass
         pid = placedata['id']
         if namedata:
             try:
