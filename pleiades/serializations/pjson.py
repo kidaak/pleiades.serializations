@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import logging as l
 from os import makedirs
 
 DEFAULT_PATH_ROOT = "/var/www/pleiades.stoa.org/json/"
@@ -29,6 +30,7 @@ class PLACEJSON(PJSON):
         """
 
         self.id = placedata['id']
+        l.debug('creating json for place id: %s' self.id)
 
         # construct a dictionary from which to serialize the JSON
         d = {}
@@ -143,6 +145,7 @@ class PLACEJSON(PJSON):
         write json to disk
         """
         pid = self.id
+        p.debug('writing json for pid: %s' % pid)
         pidbits = list(pid)
         pidpath = pathroot + '/' + '/'.join(pidbits[:split_levels]) 
         try:
@@ -150,6 +153,7 @@ class PLACEJSON(PJSON):
         except OSError:
             pass
         fn = "%s/%s.json" % (pidpath, pid)
+        p.debug('output file: %s' % fn)
         f = open(fn, 'w')
         f.write(self.json)
         f.close()

@@ -10,7 +10,7 @@ import sys
 import traceback
 import logging as l
 
-from pleiades.serializations import pcsv, pjson
+from pleiades.serialization import pcsv, pjson
 
 SCRIPT_DESC = 'Generates new-fangled Pleiades JSON from Pleiades CSV dumps'
 
@@ -23,11 +23,16 @@ def main ():
     else:
         l.basicConfig(level=l.WARNING)
 
+    l.debug('loading places data')
     pd = pcsv.PleiadesDump('data/pleiades-places-latest.csv')
+    l.debug('loading names data')
     nd = pcsv.PleiadesDump('data/pleiades-names-latest.csv')
+    l.debug('loading locations data')
     ld = pcsv.PleiadesDump('data/pleiades-locations-latest.csv')
+    l.debug('trying to write output')
     for datum in pd.data:
         p = pjson.PLACEJSON(datum, nd, ld)
+        l.debug('place id: %s' % p.id)
         p.write('data/output/json')
 
 
