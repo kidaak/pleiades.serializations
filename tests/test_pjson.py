@@ -12,7 +12,6 @@ from nose.tools import *
 
 from pleiades.serializations import pcsv, pjson
 
-
 def test_placejson():
     pd = pcsv.PleiadesDump('tests/data/consabura-places.csv')
     p = pjson.PLACEJSON(pd.data[0])
