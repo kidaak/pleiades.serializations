@@ -6,7 +6,6 @@ import json
 class PJSON():
     """
     basic JSON output class for Pleiades JSON
-
     """
 
     def __init__(self, data):
