@@ -42,17 +42,17 @@ class PLACEJSON(PJSON):
             'title'
         ]
         for o in orig:
-            if placedata[o].strip() != "":
-                d[o] = placedata[o].strip()
+            d[o] = placedata[o].strip()
         d['type'] = 'FeatureCollection'
         d['reprPoint'] = [float(placedata['reprLong']),float(placedata['reprLat'])]
-        if len(placedata['hasConnectionsWith']) > 0:
-            d['connectsWith'] = placedata['hasConnectionsWith']
+        d['connectsWith'] = placedata['hasConnectionsWith']
         try:
             d['bbox'] = [float(v.strip()) for v in placedata['bbox'].split(',')]
         except ValueError:
-            pass
+            d['bbox'] = None
         pid = placedata['id']
+        d['names'] = []
+        d['toponyms'] = []
         if namedata:
             try:
                 nn = namedata.pidx[pid]
@@ -82,6 +82,7 @@ class PLACEJSON(PJSON):
                     toponyms.append(topod)
                 d['names'] = sorted(list(set(names)))
                 d['toponyms'] = toponyms
+        d['features'] = []
         if locationdata:
             try:
                 ll = locationdata.pidx[pid]
