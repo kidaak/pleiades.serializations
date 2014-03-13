@@ -22,18 +22,32 @@ def main ():
         l.basicConfig(level=l.DEBUG)
     else:
         l.basicConfig(level=l.WARNING)
+    datadir = args.datadir
+    outdir = args.outdir
 
-    l.debug('loading places data')
-    pd = pcsv.PleiadesDump('data/pleiades-places-latest.csv')
-    l.debug('loading names data')
-    nd = pcsv.PleiadesDump('data/pleiades-names-latest.csv')
-    l.debug('loading locations data')
-    ld = pcsv.PleiadesDump('data/pleiades-locations-latest.csv')
-    l.debug('trying to write output')
+    datadir = os.path.abspath(datadir)
+    if not os.path.isdir(datadir):
+        raise IOError('data input directory not found at "%s"' % datadir)
+    l.debug('input data will be read from "%s"' % datadir)
+
+    outdir = os.path.abspath(outdir)
+    if not os.path.isdir(outdir):
+        raise IOError('csv output directory not found at "%s"' % outdir)
+    l.debug('output data will be written in "%s"' % outdir)
+
+    dataparts = datadir.split('/')
+
+    l.debug('>>> loading places data...')
+    pd = pcsv.PleiadesDump(os.path.join(datadir,'pleiades-places-latest.csv'))
+    l.debug('>>> loading names data...')
+    nd = pcsv.PleiadesDump(os.path.join(datadir,'pleiades-names-latest.csv'))
+    l.debug('>>> loading locations data...')
+    ld = pcsv.PleiadesDump(os.path.join(datadir,'pleiades-locations-latest.csv'))
+    l.debug('>>> trying to write output...')
     for datum in pd.data:
         p = pjson.PLACEJSON(datum, nd, ld)
         l.debug('place id: %s' % p.id)
-        p.write('data/output/json')
+        p.write(outdir)
 
 
 
@@ -43,6 +57,8 @@ if __name__ == "__main__":
     try:
         parser = argparse.ArgumentParser(description=SCRIPT_DESC, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
         parser.add_argument ("-v", "--verbose", action="store_true", default=False, help="verbose output")
+        parser.add_argument ("datadir", help="data directory from which CSV will be read")
+        parser.add_argument ("outdir", help="output directory wherein the output hierarchy will be constructed")
         args = parser.parse_args()
         main()
         sys.exit(0)
