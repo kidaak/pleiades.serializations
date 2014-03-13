@@ -10,8 +10,10 @@ curl -O http://atlantides.org/downloads/pleiades/dumps/pleiades-places-latest.cs
 gzip -d pleiades-locations-latest.csv.gz 
 gzip -d pleiades-names-latest.csv.gz 
 gzip -d pleiades-places-latest.csv.gz 
+cd $3
+rm -rf *
 cd $1
 
 source ~/Envs/pleiades-serializations/bin/activate
-python gen_json.py -v $2 $3
+python gen_json.py $2 $3
 
