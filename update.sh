@@ -15,7 +15,6 @@ cd $origdir
 cd $2
 rm -rf *
 cd $origdir
-
 source ~/Envs/pleiades-serializations/bin/activate
-python gen_json.py $origdir $1
+python gen_json.py $1 $2
 
